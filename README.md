@@ -1,16 +1,46 @@
-# minimal_weather_app
+# Flutter Weather App
 
-A new Flutter project.
+This Flutter application provides weather information based on the location of the user. It utilizes the OpenWeatherMap API to retrieve weather data and displays it in a user-friendly interface. The app also incorporates the Geolocator package to fetch the current location of the user for accurate weather information.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Current Weather: Get real-time weather updates, including temperature, humidity, wind speed, and weather conditions for the user's location.
+- Animated Weather Icons: Enjoy seamless animations using the Lottie package, which brings weather icons to life.
+- User-friendly Interface: The app offers an intuitive and visually appealing interface for easy navigation and pleasant user experience.
 
-A few resources to get you started if this is your first Flutter project:
+## Installation
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Clone the repository or download the source code.
+2. Ensure that Flutter is installed on your machine.
+3. Run `flutter pub get` in the project directory to fetch the dependencies.
+4. Connect your device or emulator.
+5. Run `flutter run` to launch the app on your device.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Configuration
+
+To configure the app with the OpenWeatherMap API:
+
+1. Visit [openweathermap.org](https://openweathermap.org/) and create an account (if you don't have one).
+2. Obtain an API key by following their documentation.
+3. Open the project in your preferred code editor.
+4. Navigate to the `lib` directory and open the `constants.dart` file.
+5. Replace the placeholder value for `API_KEY` with your actual API key.
+
+## Dependencies
+
+This app relies on the following packages:
+
+- `http`: For making HTTP requests to the OpenWeatherMap API.
+- `geolocator`: For retrieving the user's current location.
+- `lottie`: For adding animated weather icons.
+- Other Flutter dependencies (automatically fetched with `flutter pub get`).
+
+Make sure to check the `pubspec.yaml` file for the specific versions of these packages used in the project.
+
+## Contributing
+
+Contributions to this Flutter Weather App are welcome! If you find any bugs or have suggestions for new features, please submit an issue or open a pull request on the GitHub repository.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute the code for personal or commercial purposes.
