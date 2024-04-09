@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../service/weather_service.dart';
 import '../models/weather_model.dart';
-import '../service/apiService.dart';
+import '../constants.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -11,18 +11,7 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  final _apiService = ApiService();
-  late String apiKey;
-  late WeatherService _weatherService;
-
-  WeatherApp() {
-    _fetchApi();
-  }
-
-  _fetchApi() async {
-    apiKey = await _apiService.fetchApiKey();
-    _weatherService = WeatherService(apiKey);
-  }
+  final _weatherService = WeatherService(OPENWEATHERMAP_API_KEY);
 
   Weather? _weather;
 

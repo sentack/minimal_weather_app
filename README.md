@@ -23,11 +23,11 @@ To configure the app with the OpenWeatherMap API:
 1. Visit [openweathermap.org](https://openweathermap.org/) and create an account (if you don't have one).
 2. Obtain an API key by following their documentation.
 3. Open the project in your preferred code editor.
-4. Navigate to the `main` directory and open the `.env` file. Create a new one if it's not there.
-5. Replace the placeholder value for `OPENWEATHERMAP_API_KEY` with your actual API key. or add the following line to the file.
+4. Navigate to the lib directory and open the constants.dart file.
+5. Replace the placeholder value for OPENWEATHERMAP_API_KEY with your actual API key.
 
-```.env
-OPENWEATHERMAP_API_KEY = 'YOUR_API_KEY_HERE';
+```dart
+const String OPENWEATHERMAP_API_KEY = 'YOUR_API_KEY_HERE';
 ```
 
 6. Save the file.
@@ -39,7 +39,6 @@ This app relies on the following packages:
 - `http`: For making HTTP requests to the OpenWeatherMap API.
 - `geolocator`: For retrieving the user's current location.
 - `lottie`: For adding animated weather icons.
-- `flutter_dotenv`: For managing environment variables, including API keys.
 - Other Flutter dependencies (automatically fetched with `flutter pub get`).
 
 Make sure to check the `pubspec.yaml` file for the specific versions of these packages used in the project.
