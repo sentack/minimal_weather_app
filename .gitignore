@@ -45,4 +45,4 @@ app.*.map.json
 
 # API KEYS
 .env
-/lib/constants.dart 
+/lib/constants.dart
