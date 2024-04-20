@@ -39,6 +39,7 @@ dependencies:
   lottie: ^3.1.0
   geocode: ^1.0.3
   intl: ^0.17.0
+  flutter_typeahead: ^3.2.0
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +69,7 @@ flutter:
     - assets/rainy.json
     - assets/sunny.json
     - assets/thunder.json
+    - assets/city.list.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

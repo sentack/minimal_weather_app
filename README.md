@@ -7,6 +7,7 @@ This Flutter application provides weather information based on the user's locati
 - Current Weather: Get real-time weather updates, including temperature, humidity, wind speed, and weather conditions for the user's location.
 - Animated Weather Icons: Enjoy seamless animations using the Lottie package, which brings weather icons to life.
 - User-friendly Interface: The app offers an intuitive and visually appealing interface for easy navigation and a pleasant user experience.
+- Search for any city worldwide to get the weather info.
 
 ## Installation
 
