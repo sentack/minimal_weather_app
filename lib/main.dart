@@ -16,9 +16,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
-            fontFamily: 'Open Sans',
-            fontSize: 25,
-            fontStyle: FontStyle.italic,
+            fontFamily: 'Nunito',
+            fontSize: 18,
             letterSpacing: 1,
             fontWeight: FontWeight.w600,
           ),

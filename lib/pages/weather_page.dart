@@ -44,10 +44,8 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   _fetchWeather() async {
-    String cityName = await _weatherService.getCurrentCity();
-
     try {
-      final weather = await _weatherService.getWeather(cityName);
+      final weather = await _weatherService.getWeather();
       setState(() {
         _weather = weather;
       });
@@ -110,6 +108,33 @@ class _WeatherPageState extends State<WeatherPage> {
     }
   }
 
+  String getWindDirection(double degrees) {
+    final directions = {
+      'N': [0, 22.5],
+      'NE': [22.5, 67.5],
+      'E': [67.5, 112.5],
+      'SE': [112.5, 157.5],
+      'S': [157.5, 202.5],
+      'SW': [202.5, 247.5],
+      'W': [247.5, 292.5],
+      'NW': [292.5, 337.5],
+      'N': [337.5, 360.0]
+    };
+
+    for (final direction in directions.keys) {
+      final degreeRange = directions[direction]!;
+      if (degrees >= degreeRange[0] && degrees < degreeRange[1]) {
+        return direction;
+      }
+    }
+
+    return 'N/A';
+  }
+
+  String capitalize(String word) {
+    return "${word[0].toUpperCase()}${word.substring(1)}";
+  }
+
   @override
   void initState() {
     super.initState();
@@ -120,7 +145,9 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: TextField(
           style: const TextStyle(color: Colors.black),
           onChanged: (value) {
@@ -129,8 +156,12 @@ class _WeatherPageState extends State<WeatherPage> {
           decoration: const InputDecoration(
             labelText: 'Search City',
             fillColor: Colors.black,
-            suffixIcon: Icon(
+            prefixIcon: Icon(
               Icons.search,
+              color: Colors.purple,
+            ),
+            suffixIcon: Icon(
+              Icons.menu,
               color: Colors.purple,
             ),
           ),
@@ -174,11 +205,16 @@ class _WeatherPageState extends State<WeatherPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Spacer
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 50),
 
                     // City Name
                     Text(
-                      _weather?.cityName ?? "loading",
+                      (_weather?.cityName != null && _weather?.country != null)
+                          ? "${_weather!.cityName}, ${_weather!.country}"
+                          : "loading...",
+                      style: const TextStyle(
+                        fontSize: 25,
+                      ),
                     ),
 
                     // Spacer
@@ -194,13 +230,49 @@ class _WeatherPageState extends State<WeatherPage> {
 
                     // Temprature
                     Text(
-                      '${_weather?.temprature.round() ?? '0'} °C',
+                      (_weather?.temprature != null)
+                          ? '${_weather?.temprature.round()} °C'
+                          : "",
+                      style: const TextStyle(
+                        fontSize: 20,
+                      ),
                     ),
 
-                    //Condition
+                    // Condition
                     Text(
-                      _weather?.description.toUpperCase() ?? '',
-                    )
+                      _weather?.description
+                              .split(' ')
+                              .map((word) => capitalize(word))
+                              .join(' ') ??
+                          '',
+                      style: const TextStyle(
+                        fontSize: 25,
+                      ),
+                    ),
+
+                    // Spacer
+                    const SizedBox(height: 25),
+
+                    // Minimum and Maximum Temprature
+                    Text(
+                      (_weather?.tempMax != null && _weather?.tempMin != null)
+                          ? 'Min: ${_weather?.tempMin.round()} °C \nMax: ${_weather?.tempMax.round()} °C'
+                          : "",
+                      style: const TextStyle(
+                        color: Colors.black54,
+                      ),
+                    ),
+
+                    // Wind Speed
+                    Text(
+                      (_weather?.windSpeed != null &&
+                              _weather?.windDegree != null)
+                          ? "Wind: ${_weather!.windSpeed}m/s ${getWindDirection(_weather!.windDegree)}"
+                          : "",
+                      style: const TextStyle(
+                        color: Colors.black54,
+                      ),
+                    ),
                   ],
                 ),
               ),
