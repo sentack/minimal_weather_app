@@ -24,13 +24,14 @@ To configure the app with the OpenWeatherMap API:
 1. Visit [openweathermap.org](https://openweathermap.org/) and create an account (if you don't have one).
 2. Obtain an API key by following their documentation.
 3. Open the project in your preferred code editor.
-4. Navigate to the lib directory and open the constants.dart file.
-5. Replace the placeholder value for OPENWEATHERMAP_API_KEY with your actual API key.
+4. Navigate to the lib directory and create `constants.dart` file. and add the following:
 
 ```dart
 const String OPENWEATHERMAP_API_KEY = 'YOUR_API_KEY_HERE';
+const String WEATHERAPI_API_KEY = 'YOUR_API_KEY_HERE';
 ```
 
+5. Replace the placeholder value for OPENWEATHERMAP_API_KEY with your actual API key.
 6. Save the file.
 
 ## Dependencies
