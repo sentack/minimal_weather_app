@@ -1,6 +1,6 @@
-# Flutter Weather App
+# Flutter Minimal Weather App
 
-This Flutter application provides weather information based on the user's location. It utilizes the OpenWeatherMap API to retrieve weather data and displays it in a user-friendly interface. The app incorporates the Geolocator package to fetch the current location of the user for accurate weather information.
+This Flutter application provides weather information based on the user's location. It uses the OpenWeatherMap API to retrieve weather data and displays it in a user-friendly interface. The app incorporates the Geolocator package to fetch the current location of the user for accurate weather information.
 
 ## Features
 
