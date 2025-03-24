@@ -28,7 +28,6 @@ To configure the app with the OpenWeatherMap API:
 
 ```dart
 const String OPENWEATHERMAP_API_KEY = 'YOUR_API_KEY_HERE';
-const String WEATHERAPI_API_KEY = 'YOUR_API_KEY_HERE';
 ```
 
 5. Replace the placeholder value for OPENWEATHERMAP_API_KEY with your actual API key.

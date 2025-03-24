@@ -192,7 +192,7 @@ class _WeatherPageState extends State<WeatherPage> {
                         title: Text(
                             '${_filteredCities[index].name}, ${_filteredCities[index].country}'),
                         onTap: () => {
-                          _fetchWeatherByCity(_filteredCities[index].id),
+                          _fetchWeatherByCity(_filteredCities[index].id as int),
                           _query = '',
                         },
                       ),
