@@ -1,57 +1,63 @@
 import 'dart:convert';
 import 'dart:async';
-
 import 'package:geolocator/geolocator.dart';
-
 import '../models/weather_model.dart';
 import 'package:http/http.dart' as http;
 
 class WeatherService {
-  // ignore: constant_identifier_names
-  static const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
-
+  static const String baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
   final String apiKey;
 
   WeatherService(this.apiKey);
 
   Future<Weather> getWeatherByCityID(int cityId) async {
-    final response = await http
-        .get(Uri.parse('$BASE_URL?id=$cityId&appid=$apiKey&units=metric'));
+    try {
+      final response = await http
+          .get(Uri.parse('$baseUrl?id=$cityId&appid=$apiKey&units=metric'))
+          .timeout(const Duration(seconds: 10));
 
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (response.statusCode == 200) {
-      return Weather.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load weather data');
+      if (response.statusCode == 200) {
+        return Weather.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception('Failed to load weather data: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Network error: $e');
     }
   }
 
   Future<Weather> getWeather() async {
-    LocationPermission permission = await Geolocator.checkPermission();
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
 
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Location permissions are denied');
+        }
+      }
 
-    await Future.delayed(const Duration(seconds: 2));
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception('Location permissions are permanently denied');
+      }
 
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
 
-    var lat = position.latitude;
-    var lon = position.longitude;
+      final response = await http
+          .get(Uri.parse(
+              '$baseUrl?lat=${position.latitude}&lon=${position.longitude}&appid=$apiKey&units=metric'))
+          .timeout(const Duration(seconds: 10));
 
-    final response = await http.get(
-        Uri.parse('$BASE_URL?lon=$lon&lat=$lat&appid=$apiKey&units=metric'));
-
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (response.statusCode == 200) {
-      return Weather.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load weather data');
+      if (response.statusCode == 200) {
+        return Weather.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception('Failed to load weather data: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to get current location weather: $e');
     }
   }
 }

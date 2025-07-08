@@ -34,4 +34,18 @@ class Weather {
       tempMax: json['main']['temp_max'].toDouble(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'cityName': cityName,
+      'temprature': temprature,
+      'mainCondition': mainCondition,
+      'description': description,
+      'windSpeed': windSpeed,
+      'windDegree': windDegree,
+      'country': country,
+      'tempMin': tempMin,
+      'tempMax': tempMax,
+    };
+  }
 }

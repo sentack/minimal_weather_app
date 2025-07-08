@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'pages/weather_page.dart';
+import 'package:flutter/services.dart';
+import 'screens/splash_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,22 +10,22 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(
-            fontFamily: 'Nunito',
-            fontSize: 18,
-            letterSpacing: 1,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      home: const WeatherPage(),
+      title: 'Weather Pro',
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      home: const SplashScreen(),
     );
   }
 }
