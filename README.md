@@ -1,53 +1,267 @@
-# Flutter Minimal Weather App
+<div align="center">
 
-This Flutter application provides weather information based on the user's location. It uses the OpenWeatherMap API to retrieve weather data and displays it in a user-friendly interface. The app incorporates the Geolocator package to fetch the current location of the user for accurate weather information.
+# 🌤️ Weather App
 
-## Features
+### _Your Personal Weather Companion_
 
-- Current Weather: Get real-time weather updates, including temperature, humidity, wind speed, and weather conditions for the user's location.
-- Animated Weather Icons: Enjoy seamless animations using the Lottie package, which brings weather icons to life.
-- User-friendly Interface: The app offers an intuitive and visually appealing interface for easy navigation and a pleasant user experience.
-- Search for any city worldwide to get the weather info.
+[![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-## Installation
+_A beautiful and intuitive weather application built with Flutter that provides accurate weather information for cities worldwide._
 
-1. Clone the repository or download the source code.
-2. Ensure that Flutter is installed on your machine.
-3. Run `flutter pub get` in the project directory to fetch the dependencies.
-4. Connect your device or emulator.
-5. Run `flutter run` to launch the app on your device.
+[📱 Features](#-features) • [🚀 Installation](#-installation) • [⚙️ Configuration](#️-configuration) • [📸 Screenshots](#-screenshots) • [🤝 Contributing](#-contributing)
 
-## Configuration
+---
 
-To configure the app with the OpenWeatherMap API:
+</div>
 
-1. Visit [openweathermap.org](https://openweathermap.org/) and create an account (if you don't have one).
-2. Obtain an API key by following their documentation.
-3. Open the project in your preferred code editor.
-4. Navigate to the lib directory and create `constants.dart` file. and add the following:
+## ✨ Features
 
-```dart
-const String OPENWEATHERMAP_API_KEY = 'YOUR_API_KEY_HERE';
+<table>
+<tr>
+<td width="50%">
+
+### 🌍 **Core Weather Features**
+
+- 🌡️ **Real-time Weather Data** - Current temperature, humidity, wind speed
+- 📍 **Location-based Weather** - Automatic current location detection
+- 🔍 **Global City Search** - Search weather for any city worldwide
+- 🌅 **Detailed Information** - Sunrise/sunset, pressure, visibility, UV index
+- 📊 **Weather Analytics** - Comprehensive weather metrics and trends
+
+</td>
+<td width="50%">
+
+### 🎨 **User Experience**
+
+- 🎭 **Beautiful Animations** - Smooth Lottie weather animations
+- 🌓 **Dark/Light Theme** - Adaptive themes with system sync
+- 📱 **Responsive Design** - Optimized for all screen sizes
+- 🎯 **Simple & Expert Modes** - Choose your preferred detail level
+- ⭐ **Favorite Cities** - Save and manage your favorite locations
+
+</td>
+</tr>
+</table>
+
+### 🛠️ **Advanced Features**
+
+| Feature                       | Description                                        | Status |
+| ----------------------------- | -------------------------------------------------- | ------ |
+| 🗄️ **SQLite Database**        | Local storage for favorites, history, and settings | ✅     |
+| 🌐 **Multi-language Support** | 1 language supported for now                       | ✅     |
+| 🌡️ **Unit Conversion**        | Celsius/Fahrenheit with automatic conversion       | ✅     |
+| 📱 **Offline Support**        | Cached data for offline viewing                    | ✅     |
+| 🔔 **Smart Notifications**    | Weather alerts and updates                         | ✅     |
+| 📍 **Location Services**      | GPS with fallback options                          | ✅     |
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+
+| Home Screen                          | Search                                   | Expert Mode                              | Settings                                     |
+| ------------------------------------ | ---------------------------------------- | ---------------------------------------- | -------------------------------------------- |
+| ![Home](assets/screenshots/home.jpg) | ![Search](assets/screenshots/search.jpg) | ![Expert](assets/screenshots/expert.jpg) | ![Settings](assets/screenshots/settings.jpg) |
+
+_Beautiful gradient backgrounds with glass-morphism effects_
+
+</div>
+
+---
+
+## 🚀 Installation
+
+### Prerequisites
+
+- 📱 Flutter SDK (>=3.0.0)
+- 🎯 Dart SDK (>=3.0.0)
+- 📱 Android Studio / VS Code
+- 🔧 Git
+
+### Quick Start
+
+# 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/yourusername/weather-app.git
+cd weather-app
 ```
 
-5. Replace the placeholder value for OPENWEATHERMAP_API_KEY with your actual API key.
-6. Save the file.
+# 2️⃣ Install dependencies
 
-## Dependencies
+```bash
+flutter pub get
+```
 
-This app relies on the following packages:
+# 3️⃣ Configure API key (see configuration section)
 
-- `http`: For making HTTP requests to the OpenWeatherMap API.
-- `geolocator`: For retrieving the user's current location.
-- `lottie`: For adding animated weather icons.
-- Other Flutter dependencies (automatically fetched with `flutter pub get`).
+# 4️⃣ Run the app
 
-Make sure to check the `pubspec.yaml` file for the specific versions of these packages used in the project.
+```bash
+flutter run
+```
 
-## Contributing
+### Platform Support
 
-Contributions to this Flutter Weather App are welcome! If you find any bugs or have suggestions for new features, please submit an issue or open a pull request on the GitHub repository.
+| Platform   | Status         | Version |
+| ---------- | -------------- | ------- |
+| 🤖 Android | ✅ Supported   | API 21+ |
+| 🍎 iOS     | ✅ Supported   | iOS 12+ |
+| 🌐 Web     | 🚧 In Progress | -       |
+| 🖥️ Desktop | 🔮 Planned     | -       |
 
-## License
+---
 
-This project is licensed under the MIT License. Feel free to use, modify, and distribute the code for personal or commercial purposes.
+## ⚙️ Configuration
+
+### 🔑 API Key Setup
+
+1. **Get your API key:**
+
+   - Visit [OpenWeatherMap](https://openweathermap.org/) 🌐
+   - Create a free account
+   - Generate your API key
+
+2. **Configure the app:**
+
+   - Create the 'constants.dart' file in lib folder
+
+3. **Add your API key to in constants.dart:**
+   ```dart
+   // lib/constants.dart
+   const String OPENWEATHERMAP_API_KEY = 'your_api_key_here';
+   ```
+
+### 🔒 Security Note
+
+> ⚠️ **Important:** The `constants.dart` file is in `.gitignore` to protect your API key. Never commit API keys to version control!
+
+### 🌍 Supported Languages
+
+<details>
+<summary>Click to expand language list</summary>
+
+- 🇺🇸 English
+
+</details>
+
+---
+
+## 📦 Dependencies
+
+### Core Packages
+
+| Package                                             | Version   | Purpose           |
+| --------------------------------------------------- | --------- | ----------------- |
+| [`http`](https://pub.dev/packages/http)             | `^1.1.0`  | API requests      |
+| [`geolocator`](https://pub.dev/packages/geolocator) | `^10.1.0` | Location services |
+| [`lottie`](https://pub.dev/packages/lottie)         | `^2.7.0`  | Animations        |
+| [`provider`](https://pub.dev/packages/provider)     | `^6.1.1`  | State management  |
+| [`sqflite`](https://pub.dev/packages/sqflite)       | `^2.3.0`  | Local database    |
+
+### UI & Utilities
+
+| Package                                                 | Version  | Purpose        |
+| ------------------------------------------------------- | -------- | -------------- |
+| [`url_launcher`](https://pub.dev/packages/url_launcher) | `^6.2.1` | External links |
+| [`path`](https://pub.dev/packages/path)                 | `^1.8.3` | File paths     |
+
+---
+
+## 🏗️ Architecture
+
+\`\`\`
+lib/
+├── 📁 components/ # Reusable UI components
+├── 📁 config/ # App configuration
+├── 📁 database/ # SQLite database helpers
+├── 📁 models/ # Data models
+├── 📁 pages/ # App screens
+├── 📁 providers/ # State management
+├── 📁 service/ # API services
+├── 📁 theme/ # App theming
+└── 📄 main.dart # App entry point
+\`\`\`
+
+### 🎨 Design Patterns
+
+- **Provider Pattern** for state management
+- **Repository Pattern** for data access
+- **Singleton Pattern** for database instance
+- **Factory Pattern** for model creation
+
+---
+
+## 🤝 Contributing
+
+I welcome contributions! Here's how you can help:
+
+### 🐛 Bug Reports
+
+Found a bug? Please create an issue with:
+
+- 📝 Clear description
+- 🔄 Steps to reproduce
+- 📱 Device/OS information
+- 📸 Screenshots (if applicable)
+
+### ✨ Feature Requests
+
+Have an idea? I'd love to hear it!
+
+- 💡 Describe the feature
+- 🎯 Explain the use case
+- 🎨 Include mockups (if available)
+
+### 🔧 Pull Requests
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests (if applicable)
+5. Submit a pull request
+
+---
+
+## 📄 License
+
+\`\`\`
+MIT License
+
+Copyright (c) 2025 SENTACK
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+\`\`\`
+
+---
+
+<div align="center">
+
+## 🌟 Show Your Support
+
+If you found this project helpful, please consider:
+
+[![⭐ Star on GitHub](https://img.shields.io/badge/⭐-Star%20on%20GitHub-yellow?style=for-the-badge)](https://github.com/sentack/minimal_weather_app)
+[![🍴 Fork](https://img.shields.io/badge/🍴-Fork-blue?style=for-the-badge)](https://github.com/sentack/minimal_weather_app/fork)
+[![📢 Share](https://img.shields.io/badge/📢-Share-green?style=for-the-badge)](https://twitter.com/intent/tweet?text=Check%20out%20this%20amazing%20Flutter%20Weather%20App!)
+
+### 👨‍💻 Made with ❤️ & ☕ by [SENTACK](https://sentack-portfolio.vercel.app/)
+
+_Building beautiful mobile experiences, one app at a time._
+
+---
+
+**Version 2.1.0** • **Last Updated: July 2025**
+
+</div>
