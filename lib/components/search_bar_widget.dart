@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
+  final FocusNode? focusNode;
   final Function(String) onChanged;
   final VoidCallback onClear;
 
   const SearchBarWidget({
     super.key,
     required this.controller,
+    this.focusNode,
     required this.onChanged,
     required this.onClear,
   });
@@ -26,6 +28,7 @@ class SearchBarWidget extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
+        focusNode: focusNode,
         onChanged: onChanged,
         style: const TextStyle(
           color: Colors.white,

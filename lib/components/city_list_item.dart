@@ -5,11 +5,13 @@ import '../theme/app_theme.dart';
 class CityListItem extends StatelessWidget {
   final City city;
   final VoidCallback onTap;
+  final Widget? trailing;
 
   const CityListItem({
     super.key,
     required this.city,
     required this.onTap,
+    this.trailing,
   });
 
   @override
@@ -43,26 +45,25 @@ class CityListItem extends StatelessWidget {
                   children: [
                     Text(
                       city.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: AppTheme.textPrimary,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       city.country,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.textSecondary,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
                     ),
                   ],
                 ),
               ),
-              const Icon(
+              trailing ?? const Icon(
                 Icons.arrow_forward_ios,
-                color: AppTheme.textSecondary,
                 size: 16,
               ),
             ],

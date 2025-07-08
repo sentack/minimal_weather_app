@@ -1,142 +1,244 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
+import '../providers/theme_provider.dart';
+import '../providers/language_provider.dart';
+import '../providers/settings_provider.dart';
+import '../screens/favorites_screen.dart';
+import '../screens/search_history_screen.dart';
+import '../screens/settings_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      backgroundColor: Colors.white,
-      child: Column(
-        children: [
-          // Header
-          Container(
-            height: 200,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppTheme.primaryBlue,
-                  AppTheme.lightBlue,
-                  AppTheme.accentBlue,
-                ],
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        final isDark = themeProvider.isDarkMode;
+
+        return Drawer(
+          backgroundColor: Theme.of(context).drawerTheme.backgroundColor,
+          child: Column(
+            children: [
+              // Header
+              Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: isDark
+                        ? AppTheme.getDarkGradient()
+                        : AppTheme.getLightGradient(),
+                  ),
+                ),
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(24),
+                              child: Image.asset(
+                                'assets/icon.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Weather Pro',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Text(
+                          'Your Weather Companion',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-            child: const SafeArea(
-              child: Padding(
-                padding: EdgeInsets.all(20),
+
+              // Menu Items
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    _buildDrawerItem(
+                      context,
+                      icon: Icons.home,
+                      title: 'Home',
+                      onTap: () => Navigator.pop(context),
+                    ),
+                    _buildDrawerItem(
+                      context,
+                      icon: Icons.favorite,
+                      title: 'Favorite Cities',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FavoritesScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDrawerItem(
+                      context,
+                      icon: Icons.history,
+                      title: 'Search History',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SearchHistoryScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    const Divider(),
+                    _buildDrawerItem(
+                      context,
+                      icon: Icons.settings,
+                      title: 'Settings',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SettingsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDrawerItem(
+                      context,
+                      icon: Icons.info,
+                      title: 'About',
+                      onTap: () => _showAboutDialog(context),
+                    ),
+                    _buildDrawerItem(
+                      context,
+                      icon: Icons.help,
+                      title: 'Help & Support',
+                      onTap: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Footer with SENTACK branding
+              Container(
+                padding: const EdgeInsets.all(20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.wb_sunny,
-                        size: 30,
-                        color: AppTheme.lightBlue,
+                    const Divider(),
+                    const SizedBox(height: 10),
+                    GestureDetector(
+                      onTap: () => _launchPortfolio(),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.lightBlue.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: AppTheme.lightBlue.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.code,
+                              size: 16,
+                              color: AppTheme.lightBlue,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Made by SENTACK',
+                              style: TextStyle(
+                                color: AppTheme.lightBlue,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.open_in_new,
+                              size: 12,
+                              color: AppTheme.lightBlue,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Weather Pro',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Your Weather Companion',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 16,
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Version 1.0.0',
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.bodyMedium?.color,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-
-          // Menu Items
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                _buildDrawerItem(
-                  icon: Icons.home,
-                  title: 'Home',
-                  onTap: () => Navigator.pop(context),
-                ),
-                _buildDrawerItem(
-                  icon: Icons.favorite,
-                  title: 'Favorite Cities',
-                  onTap: () => Navigator.pop(context),
-                ),
-                _buildDrawerItem(
-                  icon: Icons.history,
-                  title: 'Search History',
-                  onTap: () => Navigator.pop(context),
-                ),
-                const Divider(),
-                _buildDrawerItem(
-                  icon: Icons.settings,
-                  title: 'Settings',
-                  onTap: () => _showSettingsDialog(context),
-                ),
-                _buildDrawerItem(
-                  icon: Icons.info,
-                  title: 'About',
-                  onTap: () => _showAboutDialog(context),
-                ),
-                _buildDrawerItem(
-                  icon: Icons.help,
-                  title: 'Help & Support',
-                  onTap: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-          ),
-
-          // Footer
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                const Divider(),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      size: 16,
-                      color: Colors.grey[600],
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Version 1.0.0',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildDrawerItem({
+  Widget _buildDrawerItem(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
@@ -149,10 +251,10 @@ class AppDrawer extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: AppTheme.textPrimary,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
         ),
       ),
       onTap: onTap,
@@ -160,43 +262,11 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  void _showSettingsDialog(BuildContext context) {
-    Navigator.pop(context);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Settings'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SwitchListTile(
-              title: const Text('Dark Mode'),
-              value: false,
-              onChanged: (value) {},
-              activeColor: AppTheme.lightBlue,
-            ),
-            SwitchListTile(
-              title: const Text('Notifications'),
-              value: true,
-              onChanged: (value) {},
-              activeColor: AppTheme.lightBlue,
-            ),
-            ListTile(
-              title: const Text('Temperature Unit'),
-              subtitle: const Text('Celsius'),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {},
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
+  Future<void> _launchPortfolio() async {
+    final Uri url = Uri.parse('https://sentack-portfolio.vercel.app/');
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      debugPrint('Could not launch portfolio URL');
+    }
   }
 
   void _showAboutDialog(BuildContext context) {
@@ -205,10 +275,23 @@ class AppDrawer extends StatelessWidget {
       context: context,
       applicationName: 'Weather Pro',
       applicationVersion: '1.0.0',
-      applicationIcon: const Icon(
-        Icons.wb_sunny,
-        size: 48,
-        color: AppTheme.lightBlue,
+      applicationIcon: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: AppTheme.lightBlue.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              'assets/icon.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
       ),
       children: [
         const Text(
@@ -216,7 +299,45 @@ class AppDrawer extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         const Text(
-          'Features:\n• Real-time weather data\n• City search functionality\n• Beautiful animations\n• Detailed weather information',
+          'Features:\n• Real-time weather data\n• City search functionality\n• Beautiful animations\n• Detailed weather information\n• Favorite cities\n• Search history\n• Dark theme support',
+        ),
+        const SizedBox(height: 16),
+        GestureDetector(
+          onTap: () => _launchPortfolio(),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.lightBlue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: AppTheme.lightBlue.withOpacity(0.3),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.person,
+                  size: 20,
+                  color: AppTheme.lightBlue,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Visit SENTACK Portfolio',
+                  style: TextStyle(
+                    color: AppTheme.lightBlue,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.open_in_new,
+                  size: 16,
+                  color: AppTheme.lightBlue,
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );

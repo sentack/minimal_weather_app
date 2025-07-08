@@ -40,11 +40,14 @@ dependencies:
   geocode: ^1.0.3
   intl: ^0.20.2
   flutter_typeahead: ^5.2.0
+  provider: ^6.1.1
+  sqflite: ^2.3.0
+  url_launcher: ^6.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -54,7 +57,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter_icons:
-  android: true
+  android: "launcher_icon"
   ios: true
   image_path: "assets/icon.png"
 
@@ -76,6 +79,7 @@ flutter:
     - assets/sunny.json
     - assets/thunder.json
     - assets/city.list.json
+    - assets/icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

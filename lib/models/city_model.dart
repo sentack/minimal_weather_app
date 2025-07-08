@@ -19,6 +19,14 @@ class City {
     );
   }
 
+  factory City.fromDatabaseJson(Map<String, dynamic> json) {
+    return City(
+      id: json['city_id'],
+      name: json['name'],
+      country: json['country'],
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
