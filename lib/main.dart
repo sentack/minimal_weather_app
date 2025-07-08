@@ -7,13 +7,29 @@ import 'providers/theme_provider.dart';
 import 'providers/language_provider.dart';
 import 'providers/settings_provider.dart';
 import 'database/database_helper.dart';
+import 'config/app_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize database
-  await DatabaseHelper.instance.database;
-  
+
+  try {
+    // Initialize database
+    await DatabaseHelper.instance.database;
+
+    // Initialize any missing settings for existing installations
+    await DatabaseHelper.instance.initializeMissingSettings();
+  } catch (e) {
+    debugPrint('Database initialization error: $e');
+
+    // If there's a critical database error, reset it
+    try {
+      await DatabaseHelper.instance.resetDatabase();
+      debugPrint('Database reset successfully');
+    } catch (resetError) {
+      debugPrint('Database reset failed: $resetError');
+    }
+  }
+
   runApp(const MyApp());
 }
 
@@ -39,7 +55,7 @@ class MyApp extends StatelessWidget {
         builder: (context, themeProvider, languageProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Weather Pro',
+            title: APP_NAME,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeProvider.themeMode,

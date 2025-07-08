@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'weather_page.dart';
 import '../theme/app_theme.dart';
 import '../providers/theme_provider.dart';
+import '../config/app_config.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -134,7 +135,7 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Column(
                       children: [
                         Text(
-                          'Weather Pro',
+                          APP_NAME,
                           style: Theme.of(context)
                               .textTheme
                               .headlineLarge
@@ -145,7 +146,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Your Personal Weather Companion',
+                          APP_DESCRIPTION,
                           style:
                               Theme.of(context).textTheme.bodyLarge?.copyWith(
                                     color: Colors.white.withOpacity(0.9),

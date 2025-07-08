@@ -8,6 +8,7 @@ import '../providers/settings_provider.dart';
 import '../screens/favorites_screen.dart';
 import '../screens/search_history_screen.dart';
 import '../screens/settings_screen.dart';
+import '../config/app_config.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -68,17 +69,17 @@ class AppDrawer extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        const Text(
-                          'Weather Pro',
-                          style: TextStyle(
+                        Text(
+                          APP_NAME,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const Text(
-                          'Your Weather Companion',
-                          style: TextStyle(
+                        Text(
+                          APP_DESCRIPTION,
+                          style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
                           ),
@@ -190,7 +191,7 @@ class AppDrawer extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Made by SENTACK',
+                              'Made by $DEVELOPER_NAME',
                               style: TextStyle(
                                 color: AppTheme.lightBlue,
                                 fontSize: 14,
@@ -218,7 +219,7 @@ class AppDrawer extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Version 1.0.0',
+                          'Version $APP_VERSION',
                           style: TextStyle(
                             color:
                                 Theme.of(context).textTheme.bodyMedium?.color,
@@ -263,7 +264,7 @@ class AppDrawer extends StatelessWidget {
   }
 
   Future<void> _launchPortfolio() async {
-    final Uri url = Uri.parse('https://sentack-portfolio.vercel.app/');
+    final Uri url = Uri.parse(PORTFOLIO_URL);
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       debugPrint('Could not launch portfolio URL');
     }
@@ -273,8 +274,8 @@ class AppDrawer extends StatelessWidget {
     Navigator.pop(context);
     showAboutDialog(
       context: context,
-      applicationName: 'Weather Pro',
-      applicationVersion: '1.0.0',
+      applicationName: APP_NAME,
+      applicationVersion: APP_VERSION,
       applicationIcon: Container(
         width: 48,
         height: 48,
@@ -299,7 +300,7 @@ class AppDrawer extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         const Text(
-          'Features:\n• Real-time weather data\n• City search functionality\n• Beautiful animations\n• Detailed weather information\n• Favorite cities\n• Search history\n• Dark theme support',
+          'Features:\n• Real-time weather data\n• City search functionality\n• Beautiful animations\n• Detailed weather information\n• Favorite cities\n• Search history\n• Dark theme support\n• Simple & Expert modes',
         ),
         const SizedBox(height: 16),
         GestureDetector(
@@ -323,7 +324,7 @@ class AppDrawer extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Visit SENTACK Portfolio',
+                  'Visit $DEVELOPER_NAME Portfolio',
                   style: TextStyle(
                     color: AppTheme.lightBlue,
                     fontWeight: FontWeight.w600,

@@ -8,14 +8,18 @@ import '../constants.dart';
 import '../models/city_model.dart';
 import '../service/city_data.dart';
 import '../components/weather_card.dart';
+import '../components/weather_details_card.dart';
+import '../components/weather_summary_card.dart';
+import '../components/enhanced_weather_details.dart';
+import '../components/location_info_card.dart';
 import '../components/search_bar_widget.dart';
 import '../components/city_list_item.dart';
 import '../components/app_drawer.dart';
-import '../components/weather_details_card.dart';
 import '../theme/app_theme.dart';
 import '../providers/theme_provider.dart';
 import '../providers/settings_provider.dart';
 import '../database/database_helper.dart';
+import '../config/app_config.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -169,40 +173,97 @@ class _WeatherPageState extends State<WeatherPage> {
 
   Future<void> _checkIfFavorite() async {
     if (_weather != null) {
-      final cityId = cities
-          .where((city) =>
-              city.name.toLowerCase() == _weather!.cityName.toLowerCase() &&
-              city.country.toLowerCase() == _weather!.country.toLowerCase())
-          .firstOrNull
-          ?.id;
+      final cityId = _findCityId(_weather!.cityName, _weather!.country);
 
       if (cityId != null) {
         final isFav = await DatabaseHelper.instance.isFavoriteCity(cityId);
         setState(() {
           _isFavorite = isFav;
         });
+      } else {
+        setState(() {
+          _isFavorite = false;
+        });
       }
     }
+  }
+
+  int? _findCityId(String cityName, String country) {
+    // Try exact match first
+    final exactMatch = cities
+        .where((city) =>
+            city.name.toLowerCase() == cityName.toLowerCase() &&
+            city.country.toLowerCase() == country.toLowerCase())
+        .firstOrNull;
+
+    if (exactMatch != null) {
+      return exactMatch.id;
+    }
+
+    // Try partial match by city name only
+    final partialMatch = cities
+        .where((city) => city.name.toLowerCase() == cityName.toLowerCase())
+        .firstOrNull;
+
+    if (partialMatch != null) {
+      return partialMatch.id;
+    }
+
+    // Try fuzzy match (contains)
+    final fuzzyMatch = cities
+        .where((city) =>
+            city.name.toLowerCase().contains(cityName.toLowerCase()) ||
+            cityName.toLowerCase().contains(city.name.toLowerCase()))
+        .firstOrNull;
+
+    return fuzzyMatch?.id;
   }
 
   Future<void> _toggleFavorite() async {
     if (_weather == null) return;
 
-    final city = cities
-        .where((city) =>
-            city.name.toLowerCase() == _weather!.cityName.toLowerCase() &&
-            city.country.toLowerCase() == _weather!.country.toLowerCase())
-        .firstOrNull;
+    final cityId = _findCityId(_weather!.cityName, _weather!.country);
 
-    if (city != null) {
+    if (cityId != null) {
+      final city = cities.firstWhere((c) => c.id == cityId);
+
       if (_isFavorite) {
-        await DatabaseHelper.instance.removeFavoriteCity(city.id);
+        await DatabaseHelper.instance.removeFavoriteCity(cityId);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${city.name} removed from favorites'),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
       } else {
         await DatabaseHelper.instance.addFavoriteCity(city);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${city.name} added to favorites'),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
       }
       setState(() {
         _isFavorite = !_isFavorite;
       });
+    } else {
+      // City not found in database, show message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Unable to add this location to favorites'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 
@@ -243,12 +304,7 @@ class _WeatherPageState extends State<WeatherPage> {
         // Check if we need to refresh the data
         if (_currentUnits != units) {
           // Find the city ID for current weather
-          final cityId = cities
-              .where((city) =>
-                  city.name.toLowerCase() == _weather!.cityName.toLowerCase() &&
-                  city.country.toLowerCase() == _weather!.country.toLowerCase())
-              .firstOrNull
-              ?.id;
+          final cityId = _findCityId(_weather!.cityName, _weather!.country);
 
           if (cityId != null) {
             // Refresh with city ID
@@ -300,9 +356,9 @@ class _WeatherPageState extends State<WeatherPage> {
             children: [
               Text(message),
               const SizedBox(height: 16),
-              const Text(
-                'Weather Pro needs location access to provide current weather information for your area.',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+              Text(
+                '$APP_NAME needs location access to provide current weather information for your area.',
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],
           ),
@@ -529,12 +585,12 @@ class _WeatherPageState extends State<WeatherPage> {
               child: SafeArea(
                 child: Column(
                   children: [
-                    _buildAppBar(),
+                    _buildAppBar(settingsProvider),
                     _buildSearchBar(),
                     Expanded(
                       child: _query.isNotEmpty
                           ? _buildSearchResults()
-                          : _buildWeatherContent(),
+                          : _buildWeatherContent(settingsProvider),
                     ),
                   ],
                 ),
@@ -546,7 +602,7 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(SettingsProvider settingsProvider) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -555,16 +611,39 @@ class _WeatherPageState extends State<WeatherPage> {
             onPressed: () => _scaffoldKey.currentState?.openDrawer(),
             icon: const Icon(Icons.menu, color: Colors.white, size: 28),
           ),
-          const Expanded(
-            child: Text(
-              'Weather Pro',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Nunito',
-              ),
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  APP_NAME,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Nunito',
+                  ),
+                ),
+                // Show current mode indicator
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    settingsProvider.isSimpleMode
+                        ? 'Simple Mode'
+                        : 'Expert Mode',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           IconButton(
@@ -644,7 +723,7 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  Widget _buildWeatherContent() {
+  Widget _buildWeatherContent(SettingsProvider settingsProvider) {
     if (_isLoading) {
       return const Center(
         child: Column(
@@ -672,9 +751,20 @@ class _WeatherPageState extends State<WeatherPage> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          WeatherCard(weather: _weather),
-          const SizedBox(height: 20),
-          WeatherDetailsCard(weather: _weather),
+          // Show different content based on display mode
+          if (settingsProvider.isSimpleMode) ...[
+            // Simple Mode - Original Cards
+            WeatherCard(weather: _weather),
+            const SizedBox(height: 20),
+            WeatherDetailsCard(weather: _weather),
+          ] else ...[
+            // Expert Mode - Enhanced Cards
+            WeatherSummaryCard(weather: _weather),
+            const SizedBox(height: 20),
+            EnhancedWeatherDetails(weather: _weather),
+            const SizedBox(height: 20),
+            LocationInfoCard(weather: _weather),
+          ],
         ],
       ),
     );

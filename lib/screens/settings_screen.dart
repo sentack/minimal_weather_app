@@ -13,9 +13,8 @@ class SettingsScreen extends StatelessWidget {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         final isDark = themeProvider.isDarkMode;
-        final gradientColors = isDark 
-            ? AppTheme.getDarkGradient() 
-            : AppTheme.getLightGradient();
+        final gradientColors =
+            isDark ? AppTheme.getDarkGradient() : AppTheme.getLightGradient();
 
         return Scaffold(
           body: Container(
@@ -36,7 +35,8 @@ class SettingsScreen extends StatelessWidget {
                       children: [
                         IconButton(
                           onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                          icon: const Icon(Icons.arrow_back,
+                              color: Colors.white, size: 28),
                         ),
                         const Expanded(
                           child: Text(
@@ -73,18 +73,18 @@ class SettingsScreen extends StatelessWidget {
                       child: ListView(
                         padding: const EdgeInsets.all(16),
                         children: [
+                          _buildSectionTitle(context, 'Display'),
+                          _buildWeatherDisplaySettings(context),
+                          const SizedBox(height: 24),
                           _buildSectionTitle(context, 'Appearance'),
                           _buildThemeSettings(context),
                           const SizedBox(height: 24),
-                          
                           _buildSectionTitle(context, 'Language'),
                           _buildLanguageSettings(context),
                           const SizedBox(height: 24),
-                          
                           _buildSectionTitle(context, 'Units'),
                           _buildUnitSettings(context),
                           const SizedBox(height: 24),
-                          
                           _buildSectionTitle(context, 'Notifications'),
                           _buildNotificationSettings(context),
                         ],
@@ -111,6 +111,116 @@ class SettingsScreen extends StatelessWidget {
           color: Theme.of(context).textTheme.headlineMedium?.color,
         ),
       ),
+    );
+  }
+
+  Widget _buildWeatherDisplaySettings(BuildContext context) {
+    return Consumer<SettingsProvider>(
+      builder: (context, settingsProvider, child) {
+        return Container(
+          decoration: BoxDecoration(
+            color: AppTheme.lightBlue.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: AppTheme.lightBlue.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.lightBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.dashboard_customize,
+                        color: AppTheme.lightBlue,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Weather Information',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Choose how much weather detail to display',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color:
+                                  Theme.of(context).textTheme.bodyMedium?.color,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              RadioListTile<String>(
+                title: Row(
+                  children: [
+                    Icon(
+                      Icons.wb_sunny_outlined,
+                      color: AppTheme.success,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    const Text('Simple Mode'),
+                  ],
+                ),
+                subtitle: const Text('Essential weather information only'),
+                value: 'simple',
+                groupValue: settingsProvider.weatherDisplayMode,
+                onChanged: (value) {
+                  if (value != null) {
+                    settingsProvider.setWeatherDisplayMode(value);
+                  }
+                },
+                activeColor: AppTheme.lightBlue,
+              ),
+              RadioListTile<String>(
+                title: Row(
+                  children: [
+                    Icon(
+                      Icons.analytics_outlined,
+                      color: AppTheme.warning,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    const Text('Expert Mode'),
+                  ],
+                ),
+                subtitle: const Text('Comprehensive weather data and analysis'),
+                value: 'expert',
+                groupValue: settingsProvider.weatherDisplayMode,
+                onChanged: (value) {
+                  if (value != null) {
+                    settingsProvider.setWeatherDisplayMode(value);
+                  }
+                },
+                activeColor: AppTheme.lightBlue,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -163,7 +273,8 @@ class SettingsScreen extends StatelessWidget {
       builder: (context, languageProvider, child) {
         return ListTile(
           title: const Text('Language'),
-          subtitle: Text(languageProvider.getLanguageName(languageProvider.currentLanguageCode)),
+          subtitle: Text(languageProvider
+              .getLanguageName(languageProvider.currentLanguageCode)),
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
           onTap: () => _showLanguageDialog(context, languageProvider),
         );
@@ -220,7 +331,8 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showLanguageDialog(BuildContext context, LanguageProvider languageProvider) {
+  void _showLanguageDialog(
+      BuildContext context, LanguageProvider languageProvider) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -231,9 +343,11 @@ class SettingsScreen extends StatelessWidget {
             shrinkWrap: true,
             itemCount: languageProvider.supportedLanguages.length,
             itemBuilder: (context, index) {
-              final languageCode = languageProvider.supportedLanguages.keys.elementAt(index);
-              final languageName = languageProvider.supportedLanguages[languageCode]!;
-              
+              final languageCode =
+                  languageProvider.supportedLanguages.keys.elementAt(index);
+              final languageName =
+                  languageProvider.supportedLanguages[languageCode]!;
+
               return RadioListTile<String>(
                 title: Text(languageName),
                 value: languageCode,

@@ -21,8 +21,9 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
+      onUpgrade: _upgradeDB,
     );
   }
 
@@ -58,11 +59,46 @@ class DatabaseHelper {
       )
     ''');
 
-    // Insert default settings
-    await db.insert('settings', {'key': 'theme_mode', 'value': 'system'});
-    await db.insert('settings', {'key': 'language', 'value': 'en'});
-    await db.insert('settings', {'key': 'temperature_unit', 'value': 'celsius'});
-    await db.insert('settings', {'key': 'notifications', 'value': 'true'});
+    // Insert default settings using INSERT OR IGNORE to prevent duplicates
+    await _insertDefaultSettings(db);
+  }
+
+  Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Add the new weather display mode setting only if it doesn't exist
+      await _insertSettingIfNotExists(db, 'weather_display_mode', 'simple');
+    }
+  }
+
+  Future<void> _insertDefaultSettings(Database db) async {
+    final defaultSettings = [
+      {'key': 'theme_mode', 'value': 'system'},
+      {'key': 'language', 'value': 'en'},
+      {'key': 'temperature_unit', 'value': 'celsius'},
+      {'key': 'notifications', 'value': 'true'},
+      {'key': 'weather_display_mode', 'value': 'simple'},
+    ];
+
+    for (final setting in defaultSettings) {
+      await db.insert(
+        'settings',
+        setting,
+        conflictAlgorithm: ConflictAlgorithm.ignore, // Ignore if already exists
+      );
+    }
+  }
+
+  Future<void> _insertSettingIfNotExists(
+      Database db, String key, String value) async {
+    final existing = await db.query(
+      'settings',
+      where: 'key = ?',
+      whereArgs: [key],
+    );
+
+    if (existing.isEmpty) {
+      await db.insert('settings', {'key': key, 'value': value});
+    }
   }
 
   // Favorite Cities Methods
@@ -121,9 +157,10 @@ class DatabaseHelper {
     return result.map((json) => SearchHistory.fromJson(json)).toList();
   }
 
-  Future<void> addSearchHistory(String cityName, String country, int cityId) async {
+  Future<void> addSearchHistory(
+      String cityName, String country, int cityId) async {
     final db = await instance.database;
-    
+
     // Remove existing entry if exists
     await db.delete(
       'search_history',
@@ -167,6 +204,43 @@ class DatabaseHelper {
       {'key': key, 'value': value},
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+
+  // Method to initialize missing settings (useful for existing installations)
+  Future<void> initializeMissingSettings() async {
+    final db = await instance.database;
+
+    final defaultSettings = [
+      {'key': 'theme_mode', 'value': 'system'},
+      {'key': 'language', 'value': 'en'},
+      {'key': 'temperature_unit', 'value': 'celsius'},
+      {'key': 'notifications', 'value': 'true'},
+      {'key': 'weather_display_mode', 'value': 'simple'},
+    ];
+
+    for (final setting in defaultSettings) {
+      final existing = await db.query(
+        'settings',
+        where: 'key = ?',
+        whereArgs: [setting['key']],
+      );
+
+      if (existing.isEmpty) {
+        await db.insert('settings', setting);
+      }
+    }
+  }
+
+  // Method to reset database (for debugging purposes)
+  Future<void> resetDatabase() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'weather_app.db');
+
+    await deleteDatabase(path);
+    _database = null;
+
+    // Reinitialize
+    await database;
   }
 
   Future<void> close() async {
